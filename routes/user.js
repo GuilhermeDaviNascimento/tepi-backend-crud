@@ -1,6 +1,14 @@
-const { User } = require("../models/index")
+const { User } = require("../models/index");
 const express = require("express");
+const bcrypt = require("bcrypt"); // Importando o bcrypt
 const router = express.Router();
+
+// Função para criptografar senha
+const hashPassword = async (password) => {
+  const salt = await bcrypt.genSalt(10); // Gera um salt
+  const hashedPassword = await bcrypt.hash(password, salt); // Criptografa a senha
+  return hashedPassword;
+};
 
 router.get('/', async (req, res) => {
   try {
@@ -13,7 +21,8 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const hashedPassword = await hashPassword(req.body.password);
+    const user = await User.create({ ...req.body, password: hashedPassword });
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar usuário." });
@@ -24,6 +33,9 @@ router.put('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (user) {
+      if (req.body.password) {
+        req.body.password = await hashPassword(req.body.password);
+      }
       await user.update(req.body);
       res.json(user);
     } else {
