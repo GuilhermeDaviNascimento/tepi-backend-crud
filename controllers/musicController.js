@@ -1,49 +1,51 @@
-const Music = require("../models/music");
+const { Music } = require("../models/index");
+const express = require("express");
+const router = express.Router(); // Instanciar o Router
 
-async function list(req, res) {
+router.get('/', async (req, res) => {
   try {
     const musics = await Music.findAll();
     res.json(musics);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao buscar usuários." });
+    res.status(500).json({ error: "Erro ao buscar músicas." });
   }
-}
+});
 
-async function create(req, res) {
+router.post('/', async (req, res) => {
   try {
     const music = await Music.create(req.body);
     res.status(201).json(music);
   } catch (error) {
-    res.status(500).json({ error: "Erro ao criar usuário." });
+    res.status(500).json({ error: "Erro ao criar música." });
   }
-}
+});
 
-async function update(req, res) {
+router.put('/:id', async (req, res) => {
   try {
     const music = await Music.findByPk(req.params.id);
     if (music) {
       await music.update(req.body);
       res.json(music);
     } else {
-      res.status(404).json({ error: "Usuário não encontrado." });
+      res.status(404).json({ error: "Música não encontrada." });
     }
   } catch (error) {
-    res.status(500).json({ error: "Erro ao atualizar usuário." });
+    res.status(500).json({ error: "Erro ao atualizar música." });
   }
-}
+});
 
-async function drop(req, res) {
+router.delete('/:id', async (req, res) => {
   try {
     const music = await Music.findByPk(req.params.id);
     if (music) {
       await music.destroy();
-      res.json({ message: "Usuário excluído com sucesso." });
+      res.json({ message: "Música excluída com sucesso." });
     } else {
-      res.status(404).json({ error: "Usuário não encontrado." });
+      res.status(404).json({ error: "Música não encontrada." });
     }
   } catch (error) {
-    res.status(500).json({ error: "Erro ao excluir usuário." });
+    res.status(500).json({ error: "Erro ao excluir música." });
   }
-}
+});
 
-module.exports = { list, create, update, drop };
+module.exports = router;

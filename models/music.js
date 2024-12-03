@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("./db");
+const sequelize = require("../config/db");
 const Album = require("./album"); 
 
 const Music = sequelize.define("Music", {
@@ -20,9 +20,6 @@ const Music = sequelize.define("Music", {
   },
 });
 
-// Associações
-Music.belongsTo(Album, { foreignKey: "albumId" });
-Album.hasMany(Music, { foreignKey: "albumId" });
 
 // Sincronize o modelo com o banco de dados
 async function syncModels() {

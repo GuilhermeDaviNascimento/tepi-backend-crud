@@ -1,24 +1,26 @@
-const User = require("../models/user");
+const { User } = require("../models/index")
+const express = require("express");
+const router = express.Router();
 
-async function list(req, res) {
+router.get('/', async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar usuários." });
   }
-}
+});
 
-async function create(req, res) {
+router.post('/', async (req, res) => {
   try {
     const user = await User.create(req.body);
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar usuário." });
   }
-}
+});
 
-async function update(req, res) {
+router.put('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (user) {
@@ -30,9 +32,9 @@ async function update(req, res) {
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar usuário." });
   }
-}
+});
 
-async function drop(req, res) {
+router.delete('/:id', async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (user) {
@@ -44,6 +46,6 @@ async function drop(req, res) {
   } catch (error) {
     res.status(500).json({ error: "Erro ao excluir usuário." });
   }
-}
+});
 
-module.exports = { list, create, update, drop };
+module.exports = router;

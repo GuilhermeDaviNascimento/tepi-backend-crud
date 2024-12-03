@@ -1,76 +1,22 @@
 const express = require("express");
 const app = express();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger-output.json');
+
+// Controladores
 const userController = require("./controllers/userController");
 const albumController = require("./controllers/albumController");
 const musicController = require("./controllers/musicController");
 
+// Middleware para JSON
 app.use(express.json());
 
-app.post("/users", async (req, res) => {
-  userController.create(req, res);
-});
-
-//POST NO POSTMAN PARA TESTAR ROTA:
-// {
-//     "name": "Guilherme",
-//     "email": "guilherme@example.com",
-//     "password": "21323"
-// }
-
-app.get("/users", async (req, res) => {
-  userController.list(req, res);
-});
-
-
-app.put("/users/:id", async (req, res) => {
-  userController.update(req, res);
-});
-
-
-app.delete("/users/:id", async (req, res) => {
-  userController.drop(req, res);
-});
-
-//ALBUMS 
-
-app.post("/albums", async (req, res) => {
-  albumController.create(req, res);
-});
-
-app.get("/albums", async (req, res) => {
-  albumController.list(req, res);
-});
-
-
-app.put("/albums/:id", async (req, res) => {
-  albumController.update(req, res);
-});
-
-
-app.delete("/albums/:id", async (req, res) => {
-  albumController.drop(req, res);
-});
-
-//MUSICAS 
-
-app.post("/musics", async (req, res) => {
-  musicController.create(req, res);
-});
-
-app.get("/musics", async (req, res) => {
-  musicController.list(req, res);
-});
-
-
-app.put("/musics/:id", async (req, res) => {
-  musicController.update(req, res);
-});
-
-
-app.delete("/musics/:id", async (req, res) => {
-  musicController.drop(req, res);
-});
-
+// Rotas da aplicação
+app.use("/users", userController);
+app.use("/albums", albumController);
+app.use("/musics", musicController);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
